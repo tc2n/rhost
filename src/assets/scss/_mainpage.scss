@@ -1,0 +1,551 @@
+//||||||||||||||||||||||||||MAIN CONTENT|||||||||||||||||||||||||//
+//||||||||||||||||||||||||||the whole black thing in the middle|||||||||||||||||||||||||//
+.main_content {
+    width: 70vw;
+    height: 90vh;
+    background-color: $color-bg-1;
+    border-radius: 2rem;
+    // display: flex;
+    // align-items: center;
+    // justify-content: center;
+    box-shadow: 4px 4px 20px rgba(#000000,.25);
+    display: grid;
+    grid-template-rows: [topbar-start] 7rem [topbar-end content-start] 1fr [content-end];
+    grid-template-columns: [sidebar-start] .3fr [sidebar-end main-start] 1fr [main-end detail-start] .35fr [detail-end];
+
+    //||||||||||||||||||||||||||TOP BAR(address bar & switcher)|||||||||||||||||||||||||//
+    .top {
+        grid-row: topbar-start / topbar-end;
+        grid-column: sidebar-end / -1;
+        border-bottom: $color-hr 2px solid;
+
+        display: flex;
+        align-items: center;
+        &>* {
+            margin:1.2rem;
+        }
+
+        //||||||||||||||||||||||||||TOP BAR-THREE ICONS|||||||||||||||||||||||||//
+        .navigation {
+            display: flex;
+            &__button {
+                margin: .8rem;
+                display: flex;
+                background-color: transparent;
+                border: none;
+                width: 2.4rem;
+                height: 2.4rem;
+                background-color: $color-text-2;
+                cursor: pointer;
+                &--back{
+                    mask: url(~@/assets/img/chevron-left.svg) no-repeat center / contain;
+                    -webkit-mask: url(~@/assets/img/chevron-left.svg) no-repeat center / contain;
+
+                }
+                &--forward{
+                    mask: url(~@/assets/img/chevron-right.svg) no-repeat center / contain;
+                    -webkit-mask: url(~@/assets/img/chevron-right.svg) no-repeat center / contain;
+                    
+                }
+                &--up{
+                    mask: url(~@/assets/img/arrow-up.svg) no-repeat center / contain;
+                    -webkit-mask: url(~@/assets/img/arrow-up.svg) no-repeat center / contain;
+                    
+                }
+                &:hover {
+                    background-color: $color-text-1;
+                }
+            }
+        }
+
+        //||||||||||||||||||||||||||TOP BAR-ADDRESS BAR|||||||||||||||||||||||||//
+        .address {
+            width: 46rem;
+            border:$color-accent 2px solid;
+            background-color: $color-white-5;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            //Folder icon at the start of the address bar
+            &__icon {
+                height: 2.4rem;
+                width: 2.6rem;
+                margin-left: 1rem;
+                margin-right: .6rem;
+                background-color:$color-white-60; /* defines the background color of the image */
+                mask: url(~@/assets/img/folder_small.svg) no-repeat center / contain;
+                -webkit-mask: url(~@/assets/img/folder_small.svg) no-repeat center / contain;
+            }
+
+            //List of directory names in the address bar
+            &__list {
+                list-style: none;
+                display: flex;
+                align-items: center;
+                justify-items: center;
+                //directory name, which contain name followed by > icon
+                &__item{
+                    display: flex;
+                    align-items: center;
+                    margin-left: .6rem;
+                    color: $color-white-60;
+                    &--text{
+                        cursor: pointer;
+                        font-size: 1.6rem;
+                    }
+                    &--icon {
+                        height: 1.6rem;
+                        width: 1.6rem;
+                        margin-left: .6rem;
+                        background-color:$color-white-60; /* defines the background color of the image */
+                        mask: url(~@/assets/img/chevron-right.svg) no-repeat center / contain;
+                        -webkit-mask: url(~@/assets/img/chevron-right.svg) no-repeat center / contain;
+                    }
+
+                    //different property of current directory name in the list
+                    &:last-child {
+                        color: $color-text-1;
+                        .address__list__item--icon {
+                            visibility: hidden;
+                        }
+                    }
+                } //End of __item
+            } //End of __list of directories
+        } //End of ADDRESS BAR//
+
+        .switch-button {
+            background-color: $color-bg-darkest;
+            border-radius: 7px;
+            overflow: hidden;
+            width: 16rem;
+            text-align: center;
+            font-size: 1.4rem;
+            color: $color-text-2;
+            position: relative;
+            font-family: inherit;
+            // padding: 2px;
+            padding-right: 8rem;
+
+            &::before{
+                content: "Grid";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                width: 8rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 3;
+                pointer-events: none;
+            }
+            &__checkbox{
+                cursor: pointer;
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                z-index: 2;
+
+                &:checked + .switch-button__label::before{
+                    transform: translateX(7.9rem);
+                    transition: transform 300ms linear;
+                }
+
+                & + .switch-button__label {
+                    position: relative;
+                    padding: .6rem 0;
+                    display: block;
+                    user-select: none;
+                    pointer-events: none;
+                    margin: 2px;
+
+                    &:before {
+                        content: "";
+                        background-color: $color-bg-darkest-2;
+                        height: 100%;
+                        width: 100%;
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        border-radius: 5px;
+                        transform: translateX(0);
+                        transition: transform 300ms;
+
+                    }
+
+                    .switch-button__label--span {
+                        position: relative;
+                    }
+                }
+            }
+
+            &__label{
+
+                &--span{
+
+                }
+            }
+        }
+    }//|||||End of TOP BAR|||||//
+
+    //||||||||||||||||||||||||||LEFT BAR|||||||||||||||||||||||||//
+    .left {
+        overflow: hidden;
+        border-top-left-radius: inherit;
+        border-bottom-left-radius: inherit;
+        background-color: $color-bg-2;
+        grid-row: 1/-1;
+        grid-column: sidebar-start / sidebar-end;
+        display: flex;
+        flex-direction: column;
+
+        //Top 3 colured buttons
+        .minimize {
+            height: 7rem;
+            display: flex;
+            align-items: center;
+            padding-left: 1.6rem;
+            padding-bottom: 1.5rem;
+            &__circle{
+                height: 1.6rem;
+                width: 1.6rem;
+                margin: .8rem;
+                cursor: pointer;
+                border-radius: 10rem;
+                transition: background-color 0.2s;
+                &--red{
+                    background-color: #EA6A63;
+                    &:hover {
+                        background-color: darken($color: #EA6A63, $amount: 20%);
+                    }
+                }
+                &--yellow{
+                    background-color: #F8CE52;
+                    &:hover {
+                        background-color: darken($color: #F8CE52, $amount: 20%);
+                    }
+                }
+                &--green{
+                    background-color: #5FCF65;
+                    &:hover {
+                        background-color: darken($color: #5FCF65, $amount: 20%);
+                    }
+                }
+            }
+        }
+        // Login status container
+        .loggedin_as{
+            //feeble looking line at the bottom of this section
+            border-bottom: $color-hr 2px solid;
+
+            &__content{
+                background-color: $color-bg-3;
+                border-radius: 10px;
+                margin: 0 1.6rem 1.6rem 1.6rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                .connto {
+                    font-size: 1.8rem;
+                    color: $color-text-3;
+                    margin: .6rem;
+                }
+
+                .connection {
+                    color: $color-text-1;
+                    font-size: 1.8rem;
+                    display: flex;
+                    .indicator {
+                        height: 1.2rem;
+                        width: 1.2rem;
+                        margin: .6rem;
+                        border-radius: 10rem;
+                        transition: background-color 0.2s;
+                        &--green{
+                            background-color: #4AE452;
+                        }
+                    }
+                }
+                //Time elapsed to last login
+                .conntime {
+                    font-size: 1.6rem;
+                    color: $color-text-2;
+                }
+            }
+        }
+
+        //Options, selected of which will be shown in the middle
+        .tabs{
+            flex-grow: 1;
+
+            &__item {
+                color: $color-text-1;
+                display: flex;
+                justify-content: start;
+                background-color: transparent;
+                transition: background-color 0.5s;
+                align-items: center;
+                border-radius: 5px;
+                padding: .6rem;
+                margin: .8rem;
+
+                &:first-child {
+                    margin-top: 1.2rem;
+                }
+                &__text {
+                    font-size: 1.6rem;
+                }
+                &__icon {
+                    width: 1.6rem;
+                    height: 1.6rem;
+                    background-color: $color-text-1;
+                    margin-left: 1rem;
+                    margin-right: 1rem;
+                    &--dir {
+                        mask: url(~@/assets/img/ops_dir.svg) no-repeat center / contain;
+                        -webkit-mask: url(~@/assets/img/ops_dir.svg) no-repeat center / contain;
+                    }
+                    &--apps {
+                        mask: url(~@/assets/img/ops_apps.svg) no-repeat center / contain;
+                        -webkit-mask: url(~@/assets/img/ops_apps.svg) no-repeat center / contain;
+                    }
+                    &--git {
+                        mask: url(~@/assets/img/ops_git.svg) no-repeat center / contain;
+                        -webkit-mask: url(~@/assets/img/ops_git.svg) no-repeat center / contain;
+                    }
+                }
+                &:hover {
+                    background-color: $color-white-5;
+                }
+            }
+            
+            &__list {
+                list-style: none;
+                .active {
+                    background-color: $color-accent;
+                    &:hover {
+                        background-color: $color-accent-hover;
+                    }
+                }
+                &>* {
+                    cursor: default;
+                }
+            }
+
+        }
+        .options:last-child{
+            margin-bottom: 2rem;
+        }
+    }
+
+    //||||||||||||||||||||||||||MAIN PART|||||||||||||||||||||||||//
+    .files_space {
+        .files {
+            margin: 2.4rem;
+            list-style: none;
+            display: grid;
+            gap: 2.4rem;
+            grid-template-columns: repeat(5, 1fr);
+            font-family: inherit;
+            font-size: 1.3rem;
+            color: white;
+
+            
+        }
+
+        .file {
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            &__name {
+                margin-top: .8rem;
+            }
+
+            &--active {
+                border: $color-accent 2px solid;
+                border-radius: 1rem;
+                background-color: $color-white-5;
+            }
+
+            &:hover {
+                // border: $color-accent 2px solid;
+                border-radius: 1rem;
+                background-color: $color-white-5;
+            }
+        }
+    }
+
+    //||||||||||||||||||||||||||RIGHT BAR|||||||||||||||||||||||||//
+    .right {
+        overflow: hidden;
+        border-bottom-right-radius: inherit;
+        background-color: $color-bg-2;
+        grid-row: content-start / content-end;
+        grid-column: -1 / -2;
+
+        display: flex;
+        flex-direction: column;
+
+        .file_info{
+            //feeble looking line at the bottom of this section
+            border-bottom: $color-hr 2px solid;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            &__icon{
+                width: 7.8rem;
+                height: 10rem;
+                margin: 1.2rem;
+                background-size: contain;
+                &--folder{
+                background: url(~@/assets/img/folder_thumbnail.svg) no-repeat center;
+                }
+                &--unknown{
+                background: url(~@/assets/img/file_cpp.svg) no-repeat center;
+                }
+            }
+            &__name {
+                font-size: 1.8rem;
+                color: $color-text-1;
+                margin: 0.2rem;
+            }
+            &__size {
+                font-size: 1.6rem;
+                color: $color-text-3;
+            }
+
+            &__buttons {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr 1fr;
+                row-gap: 1.2rem;
+                column-gap: 2.4rem;
+                margin: 1.2rem;
+            }
+        }
+        //Permissions section of a file
+        .permissions{
+            margin: 1.2rem;
+            display: flex;
+            flex-direction: column;
+
+            // Heading and 'save' button row
+            &__heading{
+                display: flex;
+                justify-content: space-between;
+                &--text{
+                    color: $color-text-3;
+                    font-size: 1.8rem;
+                }
+            }
+
+            //'user', 'root' and 'others' options
+            &__names {
+                display: flex;
+                flex-direction: column;
+                margin: .8rem;
+                //This controls single row eg. 'user' and list of permissions
+                &>*{
+                    display: flex;
+                    justify-content: space-between;
+                    margin: .3rem;
+                    //This is the heading of the permission space eg. 'user'
+                    span {
+                        color: $color-text-1;
+                        font-size: 1.6rem;
+                    }
+                }
+
+                //This is 'ul' tag of all permissions
+                &__types{
+                    list-style-type: none;
+                    display: flex;
+                }
+
+                //Single rounded box of each permission 'li' tag
+                &__type{
+                    height: 2rem;
+                    width: 2rem;
+                    margin: 0 .4rem;
+                    text-align: center;
+                    border-radius: 10rem;
+                    background-color: none;
+                    color: $color-text-3;
+                    font-size: 1.4rem;
+                    border: $color-text-3 2px solid;
+                    cursor: pointer;
+                    &--active {
+                        color: $color-text-1;
+                        border-color: $color-accent;
+                        background-color: $color-accent;
+                        cursor: default;
+                    }
+
+                    &--toset {
+                        color: $color-text-1;
+                        border-color: $color-text-1;
+                        background-color: $color-white-5;
+                    }
+                    &--tounset {
+                        border-color: lighten($color-accent, 20%);
+                        background-color: lighten($color-accent, 20%);
+                    }
+                }
+            }
+        }
+    }
+
+    //Hollow button, used as Logout button and options in the right bar
+    .hollow_button {
+        background-color: transparent;
+        font-size: 1.4rem;
+        padding: .6rem 1rem;
+        margin: 1.8rem;
+        border: $color-text-1 2px solid;
+        border-radius: 7px;
+        color: $color-text-1;
+        font-family: inherit;
+        transition: all, 0.4s;
+        &:hover {
+            cursor: pointer;
+            background-color: $color-white-5;
+        }
+        &--alert {
+            border: $color-alert 2px solid;
+            background-color: $color-alert;
+
+            &:hover {
+                background-color: darken($color: $color-alert, $amount: 5);
+                border-color: darken($color: $color-alert, $amount: 5);
+            }
+        }
+    }
+}
+
+.simple_button {
+    background-color: transparent;
+    font-size: 1.6rem;
+    color: $color-accent;
+    transition: all, 0.4s;
+    border: none;
+    &:hover {
+        cursor: pointer;
+        color: lighten($color: $color-accent, $amount: 20);
+    }
+}
+
+
+.no-mar{
+    margin:0 !important;
+}
