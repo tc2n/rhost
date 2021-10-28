@@ -1,5 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Login from '../views/Login.vue'
+import store from '../store'
+
 
 const routes = [
   {
@@ -8,7 +10,7 @@ const routes = [
     component: Login
   },
   {
-    path: '/home',
+    path: '/home/:path',
     name: 'Home',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
@@ -17,9 +19,25 @@ const routes = [
   }
 ]
 
+
+
 const router = createRouter({
+  mode: 'hash',
+  base: process.env.BASE_URL,
   history: createWebHashHistory(),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.path != '/') {
+    if (store.state.islogged) {
+      next();
+    } else {
+      next('/');
+    }
+  } else {
+    next();
+  }
 })
 
 export default router
