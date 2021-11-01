@@ -1,111 +1,194 @@
 <template>
-  <div class="main_content"> <!--Black Box-->
-            <div class="top"> <!--Address Bar-->
-                <div class="navigation">
-                    <button class="navigation__button navigation__button--back"></button>
-                    <button class="navigation__button navigation__button--forward"></button>
-                    <button class="navigation__button navigation__button--up"></button>
-                </div>
-                <div class="address">
-                    <span class="address__icon"></span>
-                    <ul class="address__list">
-                        <li class="address__list__item">
-                            <span class="address__list__item--text">home</span>
-                            <span class="address__list__item--icon"></span>
-                        </li>
-                        <li class="address__list__item">
-                            <span class="address__list__item--text">project</span>
-                            <span class="address__list__item--icon"></span>
-                        </li>
-                        <li class="address__list__item">
-                            <span class="address__list__item--text">code</span>
-                            <span class="address__list__item--icon"></span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="switch-button">
-                    <input class="switch-button__checkbox" type="checkbox"/>
-                    <label class="switch-button__label" for=""><span class="switch-button__label--span">List</span></label>
-                </div>
-            </div>
-            <div class="left"> <!--Global Options-->
-                    <div class="minimize">
-                        <span class="minimize__circle minimize__circle--red"></span>
-                        <span class="minimize__circle minimize__circle--yellow"></span>
-                        <span class="minimize__circle minimize__circle--green"></span>
-                    </div>
-                    <User />
-                    <Tabs />
-                    <Options @new-folder="createNewFolder" @new-file="createNewFolder" /> 
-            </div>
-            <div class="files_space"> <!--File Explored & Editor-->
-                <ul class="files">
-                    <FileItem :file_items="file_items" @selected-id="update_selected" />
-                </ul>
-            </div>
-            <div class="right"> <!--File Options-->
-                <RightDetails :file_item="selected_file(this.selected_id)" @rename="rename"/>
-                <Permissions :file_item="selected_file(this.selected_id)" @update-permission="update_permissions"/>
-            </div>
-        </div>
+  <div class="main_content">
+    <!--Black Box-->
+    <div class="top">
+      <!--Address Bar-->
+      <div class="navigation">
+        <button class="navigation__button navigation__button--back"></button>
+        <button class="navigation__button navigation__button--forward"></button>
+        <button class="navigation__button navigation__button--up"></button>
+      </div>
+      <div class="address">
+        <span class="address__icon"></span>
+        <ul class="address__list">
+          <li class="address__list__item">
+            <span class="address__list__item--text">home</span>
+            <span class="address__list__item--icon"></span>
+          </li>
+          <li class="address__list__item">
+            <span class="address__list__item--text">project</span>
+            <span class="address__list__item--icon"></span>
+          </li>
+          <li class="address__list__item">
+            <span class="address__list__item--text">code</span>
+            <span class="address__list__item--icon"></span>
+          </li>
+        </ul>
+      </div>
+      <div class="switch-button">
+        <input class="switch-button__checkbox" type="checkbox" />
+        <label class="switch-button__label" for=""
+          ><span class="switch-button__label--span">List</span></label
+        >
+      </div>
+    </div>
+    <div class="left">
+      <!--Global Options-->
+      <div class="minimize">
+        <span class="minimize__circle minimize__circle--red"></span>
+        <span class="minimize__circle minimize__circle--yellow"></span>
+        <span class="minimize__circle minimize__circle--green"></span>
+      </div>
+      <User />
+      <Tabs />
+      <Options @new-folder="createNewFolder" @new-file="createNewFolder" />
+    </div>
+    <div class="files_space">
+      <!--File Explored & Editor-->
+      <ul class="files">
+        <FileItem
+          :file_items="file_items"
+          @selected-id="update_selected"
+          @open-file="fileclicked"
+        />
+      </ul>
+    </div>
+    <div class="right">
+      <!--File Options-->
+      <RightDetails
+        :file_item="selected_file(this.selected_id)"
+        @rename="rename"
+      />
+      <Permissions
+        :file_item="selected_file(this.selected_id)"
+        @update-permission="update_permissions"
+      />
+    </div>
+  </div>
 </template>
 
 
 <script>
-import FileItem from '../components/FileItem.vue'
-import RightDetails from '../components/RightDetails.vue'
-import Permissions from '../components/RightPermissions.vue'
-import User from '../components/LeftUser.vue'
-import Tabs from '../components/LeftTabs.vue'
-import Options from '../components/LeftOptions.vue'
+import FileItem from "../components/FileItem.vue";
+import RightDetails from "../components/RightDetails.vue";
+import Permissions from "../components/RightPermissions.vue";
+import User from "../components/LeftUser.vue";
+import Tabs from "../components/LeftTabs.vue";
+import Options from "../components/LeftOptions.vue";
+import axios from "axios";
 
 export default {
-    name:'Home',
+  name: "Home",
 
-    components: {
-        FileItem,
-        RightDetails,
-        Permissions,
-        User,
-        Tabs,
-        Options
+  components: {
+    FileItem,
+    RightDetails,
+    Permissions,
+    User,
+    Tabs,
+    Options,
+  },
+
+  methods: {
+    update_selected(id) {
+      this.selected_id = id;
     },
-
-    methods: {
-        update_selected(id){
-            this.selected_id=id;
-        },
-        selected_file(id){
-            return this.file_items.filter((file)=>file.id===id)[0]
-        },
-        update_permissions(newVal){
-            this.file_items.forEach((item)=>{if(item.id==this.selected_id){item.permission=newVal}})
-        },
-        rename(newVal){
-            this.file_items.forEach((item)=>{if(item.id==this.selected_id){item.name=newVal}})
-        },
-        createNewFolder(details){
-            this.file_items.push(details)
+    selected_file(id) {
+      return this.file_items[id];
+    },
+    update_permissions(newVal) {
+      this.file_items.forEach((item) => {
+        if (item.id == this.selected_id) {
+          item.permission = newVal;
         }
+      });
     },
-
-    data(){
-        return {
-            file_items:[],
-            selected_id: 1
+    rename(newVal) {
+      this.file_items.forEach((item) => {
+        if (item.id == this.selected_id) {
+          item.name = newVal;
         }
+      });
+    },
+    createNewFolder(details) {
+      this.file_items.push(details);
     },
 
-    created() {
-        this.file_items=[
-            {id:1, name: 'using_files', directory:true, size:10003, permission: '-rw-r--r--'},
-            {id:2, name: 'Empty Foder', directory:true, size:1234, permission: '-rw-r--r--'},
-            {id:3, name: 'File2', directory:true, size:12367, permission: '-rw-rwxr--'},
-            {id:4, name: 'normal', directory:true, size:10223, permission: '-rw-r--rw-'},
-            {id:5, name: 'top secret', directory:true, size:13653, permission: '-rw-rw-rw-'},
-            {id:6, name: 'heyman', directory:true, size:10903, permission: '-rw-r--r--'},
-            {id: 7, name:'basics.cpp', directory:false, size:193, permission: '-rw-rw-r-x'}
-        ]
+    filerender() {
+      let s = this.$route.params.path;
+      axios
+        .post("http://localhost:8000/api/list", { path: s })
+        .then((res) => {
+          if (res.data.type !== "file") {
+            this.$store.dispatch("previouspath", {
+              previouspath: this.$route.params.path,
+            });
+            this.file_items = res.data.data;
+          } else {
+            this.$store.dispatch("filedata", { filedata: res.data.content });
+            this.$router.push({ name: "editor" });
+          }
+        })
+        .catch((err) => {
+          this.$store.dispatch("logout");
+          this.$router.push({ path: "/" });
+          this.logout();
+          throw err;
+        });
+    },
+    async fileclicked(index) {
+      this.$store.dispatch("previouspath", {
+        previouspath: this.$route.params.path,
+      });
+      let promise = new Promise((resolve, reject) => {
+        let sub;
+        if (this.$route.params.path === "/") {
+          sub = this.$route.params.path + this.file_items[index][2];
+        } else {
+          sub = this.$route.params.path + "/" + this.file_items[index][2];
+        }
+
+        axios
+          .post("http://localhost:8000/api/list", { path: sub })
+          .then((res) => {
+            if (res.data.type === "file") {
+              this.$store.dispatch("filedata", { filedata: res.data.content });
+              this.$store.dispatch("previouspath", { previouspath: sub });
+              this.$router.push({ name: "editor" });
+            } else {
+              this.$router.push({ name: "directory", params: { path: sub } });
+            }
+          }).catch(e=>reject(`error occured ${e}`))
+      });
+      await promise;
+    },
+  },
+
+  data() {
+    return {
+      file_items: [],
+      selected_id: null,
+
+      basePath: "",
+      datac: [],
+      length: "",
+    };
+  },
+
+  mounted() {
+    if (!this.$route.params.path) {
+      this.$router.push({ name: "directory", params: { path: "/" } });
     }
-}
+    this.filerender();
+  },
+
+  watch: {
+      '$route'(to, from){
+          console.log(`to: ${to} to from: ${from}`)
+          this.filerender();
+      }
+  }
+};
 </script>
+
+// ls -lghio
