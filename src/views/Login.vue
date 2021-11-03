@@ -2,6 +2,7 @@
   <!-- <div class="home">
     <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div> -->
+  
   <div class="content">
     <div class="content__real">
       <img
@@ -85,6 +86,8 @@ export default {
 
   methods: {
     login() {
+      let buttonLogin = document.querySelector('.button');
+      buttonLogin.classList.toggle('loading')
       axios
         .post(`http://localhost:8000/api/login`, {
           host: this.host,
@@ -98,20 +101,25 @@ export default {
               username: this.username,
               password: this.password,
             });
-            this.$router.push({ name: "Home", params: { path: "/" } });
             if (typeof Storage !== "undefined") {
               localStorage.setItem("host", String(this.host));
               localStorage.setItem("username", String(this.username));
             }
+            buttonLogin.classList.toggle('loading')
+            this.$router.push({ name: "Home", params: { path: "/" } });
           }
         })
         .catch((err) => {
           alert(`Error during Login: ${err}`);
           localStorage.clear();
           this.lastLogin = false;
+          buttonLogin.classList.toggle('loading')
         });
     }, //login method
     loginPrevious(){
+      let buttonEmpty = document.querySelector('button');
+      buttonEmpty.classList.toggle('loading')
+      console.log('clicked')
       let temppass = prompt("Enter your password:")
       axios
         .post(`http://localhost:8000/api/login`, {
@@ -126,10 +134,12 @@ export default {
               username: localStorage.getItem('username'),
               password: temppass,
             });
+            buttonEmpty.classList.toggle('loading')
             this.$router.push({ name: "Home", params: { path: "/" } });
           }
         })
         .catch((err) => {
+          buttonEmpty.classList.toggle('loading')
           alert(`Error during Login: ${err}`);
         });
     }
@@ -139,6 +149,8 @@ export default {
     document.querySelector(".form").addEventListener("click", function (event) {
       event.preventDefault();
     });
+    
+    
 
     if (this.$store.state.islogged) {
       this.$router.push({ name: "Home", params: { path: "/" } });
@@ -152,3 +164,4 @@ export default {
   },
 };
 </script>
+
