@@ -9,7 +9,7 @@
         ></span
         ><span>{{$store.state.username}}</span>
       </div>
-      <div class="conntime">1 hr 28 min</div>
+      <div class="conntime">Welcome!</div>
       <input type="button" value="Log out" class="hollow_button" @click="logout"/>
     </div>
   </div>

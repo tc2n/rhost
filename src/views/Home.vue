@@ -54,15 +54,17 @@
       </ul>
     </div>
     <div class="right">
-      <!--File Options-->
       <RightDetails
-        :file_item="selected_file(this.selected_id)"
+        v-if="selected_id !== null"
+        :file_item="this.file_items[this.selected_id]"
         @rename="rename"
+        @open-file="fileclicked"
       />
-      <Permissions
-        :file_item="selected_file(this.selected_id)"
+      <!-- <Permissions
+      v-if="selected_id !== null"
+        :file_item="this.file_items[this.selected_id]"
         @update-permission="update_permissions"
-      />
+      /> -->
     </div>
   </div>
 </template>
@@ -71,7 +73,7 @@
 <script>
 import FileItem from "../components/FileItem.vue";
 import RightDetails from "../components/RightDetails.vue";
-import Permissions from "../components/RightPermissions.vue";
+// import Permissions from "../components/RightPermissions.vue";
 import User from "../components/LeftUser.vue";
 import Tabs from "../components/LeftTabs.vue";
 import Options from "../components/LeftOptions.vue";
@@ -83,7 +85,7 @@ export default {
   components: {
     FileItem,
     RightDetails,
-    Permissions,
+    // Permissions,
     User,
     Tabs,
     Options,
@@ -143,9 +145,9 @@ export default {
       let promise = new Promise((resolve, reject) => {
         let sub;
         if (this.$route.params.path === "/") {
-          sub = this.$route.params.path + this.file_items[index][2];
+          sub = this.$route.params.path + this.file_items[index ? index : this.selected_id][2];
         } else {
-          sub = this.$route.params.path + "/" + this.file_items[index][2];
+          sub = this.$route.params.path + "/" + this.file_items[index ? index : this.selected_id][2];
         }
 
         axios
@@ -156,7 +158,7 @@ export default {
               this.$store.dispatch("previouspath", { previouspath: sub });
               this.$router.push({ name: "editor" });
             } else {
-              this.$router.push({ name: "directory", params: { path: sub } });
+              this.$router.push({ name: "Home", params: { path: sub } });
             }
           }).catch(e=>reject(`error occured ${e}`))
       });
@@ -177,7 +179,7 @@ export default {
 
   mounted() {
     if (!this.$route.params.path) {
-      this.$router.push({ name: "directory", params: { path: "/" } });
+      this.$router.push({ name: "Home", params: { path: "/" } });
     }
     this.filerender();
   },

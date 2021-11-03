@@ -346,6 +346,10 @@
 
     //||||||||||||||||||||||||||MAIN PART|||||||||||||||||||||||||//
     .files_space {
+        overflow-y: scroll;
+        &::-webkit-scrollbar {
+            display: none;
+        }
         .files {
             margin: 2.4rem;
             list-style: none;
