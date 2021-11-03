@@ -130,3 +130,7 @@
         }
     }
 }
+
+.loading {
+    background-color: lighten($color-accent, 15%) !important;
+}

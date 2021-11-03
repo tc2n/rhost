@@ -3,28 +3,7 @@
     <!--Black Box-->
     <div class="top">
       <!--Address Bar-->
-      <div class="navigation">
-        <button class="navigation__button navigation__button--back"></button>
-        <button class="navigation__button navigation__button--forward"></button>
-        <button class="navigation__button navigation__button--up"></button>
-      </div>
-      <div class="address">
-        <span class="address__icon"></span>
-        <ul class="address__list">
-          <li class="address__list__item">
-            <span class="address__list__item--text">home</span>
-            <span class="address__list__item--icon"></span>
-          </li>
-          <li class="address__list__item">
-            <span class="address__list__item--text">project</span>
-            <span class="address__list__item--icon"></span>
-          </li>
-          <li class="address__list__item">
-            <span class="address__list__item--text">code</span>
-            <span class="address__list__item--icon"></span>
-          </li>
-        </ul>
-      </div>
+      <AddressBar :fullPath="this.full_path"/>
       <div class="switch-button">
         <input class="switch-button__checkbox" type="checkbox" />
         <label class="switch-button__label" for=""
@@ -54,15 +33,18 @@
       </ul>
     </div>
     <div class="right">
-      <!--File Options-->
       <RightDetails
-        :file_item="selected_file(this.selected_id)"
+        v-if="selected_id !== null"
+        :file_item="this.file_items[this.selected_id]"
+        :index="this.selected_id"
         @rename="rename"
+        @open-file="fileclicked"
       />
-      <Permissions
-        :file_item="selected_file(this.selected_id)"
+      <!-- <Permissions
+      v-if="selected_id !== null"
+        :file_item="this.file_items[this.selected_id]"
         @update-permission="update_permissions"
-      />
+      /> -->
     </div>
   </div>
 </template>
@@ -71,10 +53,11 @@
 <script>
 import FileItem from "../components/FileItem.vue";
 import RightDetails from "../components/RightDetails.vue";
-import Permissions from "../components/RightPermissions.vue";
+// import Permissions from "../components/RightPermissions.vue";
 import User from "../components/LeftUser.vue";
 import Tabs from "../components/LeftTabs.vue";
 import Options from "../components/LeftOptions.vue";
+import AddressBar from "../components/AddressBar.vue";
 import axios from "axios";
 
 export default {
@@ -83,10 +66,11 @@ export default {
   components: {
     FileItem,
     RightDetails,
-    Permissions,
+    // Permissions,
     User,
     Tabs,
     Options,
+    AddressBar
   },
 
   methods: {
@@ -130,22 +114,26 @@ export default {
           }
         })
         .catch((err) => {
-          this.$store.dispatch("logout");
-          this.$router.push({ path: "/" });
-          this.logout();
+          console.log('Error occured'+String(err))
           throw err;
         });
     },
     async fileclicked(index) {
+      let loader = this.$loading.show({container: null});
       this.$store.dispatch("previouspath", {
         previouspath: this.$route.params.path,
       });
       let promise = new Promise((resolve, reject) => {
         let sub;
         if (this.$route.params.path === "/") {
-          sub = this.$route.params.path + this.file_items[index][2];
+          sub =
+            this.$route.params.path +
+            this.file_items[index][2];
         } else {
-          sub = this.$route.params.path + "/" + this.file_items[index][2];
+          sub =
+            this.$route.params.path +
+            "/" +
+            this.file_items[index][2];
         }
 
         axios
@@ -156,9 +144,14 @@ export default {
               this.$store.dispatch("previouspath", { previouspath: sub });
               this.$router.push({ name: "editor" });
             } else {
-              this.$router.push({ name: "directory", params: { path: sub } });
+              this.$router.push({ name: "Home", params: { path: sub } });
             }
-          }).catch(e=>reject(`error occured ${e}`))
+            loader.hide()
+          })
+          .catch((e) => {
+            loader.hide()
+            reject(`error occured ${e}`)});
+
       });
       await promise;
     },
@@ -168,26 +161,24 @@ export default {
     return {
       file_items: [],
       selected_id: null,
-
-      basePath: "",
-      datac: [],
-      length: "",
+      full_path: this.$store.state.previouspath.split('/')
     };
   },
 
   mounted() {
     if (!this.$route.params.path) {
-      this.$router.push({ name: "directory", params: { path: "/" } });
+      this.$router.push({ name: "Home", params: { path: "/" } });
     }
     this.filerender();
   },
 
   watch: {
-      '$route'(to, from){
-          console.log(`to: ${to} to from: ${from}`)
-          this.filerender();
-      }
-  }
+    $route(to, from) {
+      console.log(`to: ${to} to from: ${from}`);
+      this.full_path=this.$route.params.path.split('/')
+      this.filerender();
+    },
+  },
 };
 </script>
 
